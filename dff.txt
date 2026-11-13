@@ -1,0 +1,93 @@
+using System;
+using System.Globalization;
+using System.Data;
+using System.Windows.Forms;
+
+namespace пукпук2
+{
+    public partial class Method1 : Form
+    {
+        public Method1()
+        {
+            InitializeComponent();
+        }
+
+        private void btnSolve_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string function = txtFunction.Text;
+                double a = double.Parse(txtA.Text, CultureInfo.InvariantCulture);
+                double b = double.Parse(txtB.Text, CultureInfo.InvariantCulture);
+                double epsilon = double.Parse(txtPrecision.Text, CultureInfo.InvariantCulture);
+
+                if (a >= b)
+                {
+                    txtResult.Text = "Ошибка: a должно быть меньше b";
+                    return;
+                }
+
+                double fa = EvaluateFunction(function, a);
+                double fb = EvaluateFunction(function, b);
+
+                if (fa * fb > 0)
+                {
+                    txtResult.Text = "f(a) и f(b) имеют одинаковый знак. Корня нет.";
+                    return;
+                }
+
+                int iteration = 0;
+                double c = 0;
+
+                while (Math.Abs(b - a) > epsilon)
+                {
+                    iteration++;
+                    c = (a + b) / 2;
+                    double fc = EvaluateFunction(function, c);
+
+                    if (Math.Abs(fc) < epsilon)
+                        break;
+
+                    if (fa * fc < 0)
+                    {
+                        b = c;
+                        fb = fc;
+                    }
+                    else
+                    {
+                        a = c;
+                        fa = fc;
+                    }
+
+                    if (iteration > 1000) break;
+                }
+
+                txtResult.Text = "Корень: x ≈ " + c.ToString("F4");
+                txtResult.Text += " Итераций: " + iteration;
+            }
+            catch (Exception ex)
+            {
+                txtResult.Text = "Ошибка: " + ex.Message;
+            }
+        }
+        private double EvaluateFunction(string expression, double x)
+        {
+            string xStr = x.ToString(CultureInfo.InvariantCulture);
+            string expr = expression.Replace("x", "(" + xStr + ")");
+
+            DataTable table = new DataTable();
+            return Convert.ToDouble(table.Compute(expr, null), CultureInfo.InvariantCulture);
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            txtFunction.Text = "";
+            txtA.Text = "";
+            txtB.Text = "";
+            txtPrecision.Text = "";
+            txtResult.Text = "";
+        }
+
+    }
+}
+//x*x*x - 2*x - 5
