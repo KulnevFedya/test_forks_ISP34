@@ -1,0 +1,58 @@
+def f(x, function):
+    return eval(function)
+
+def bisection(a, b, eps, function):
+    i = 0
+    while (b - a) / 2 > eps:
+        c = (a + b) / 2
+        i += 1
+        print(f"Итерация {i}: a={a:.6f}, b={b:.6f}, c={c:.6f}, f(c)={f(c, function):.6f}")
+        
+        if f(a, function) * f(c, function) < 0:
+            b = c
+        else:
+            a = c
+    return (a + b) / 2
+
+def chord(a, b, eps, function):
+    i = 0
+    while abs(b - a) > eps:
+        fa = f(a, function)
+        fb = f(b, function)
+        c = a - fa * (b - a) / (fb - fa)
+        fc = f(c, function)
+        i += 1
+        print(f"Итерация {i}: a={a:.6f}, b={b:.6f}, c={c:.6f}, f(c)={fc:.6f}")
+        
+        if abs(fc) < eps:
+            print(f"\nf(c) = {fc:.10f} < eps, корень найден!")
+            return c
+        
+        if fa * fc < 0:
+            b = c
+        else:
+            a = c
+        
+        if i >= 100:
+            print("100 итерациий")
+            return c
+    return c 
+
+function = input("Введите функцию: ")
+a = float(input("Введите начало интервала: "))
+b = float(input("Введите конец интервала: "))
+eps = float(input("Введите точность: "))
+
+print("\nВыберите метод:")
+print("1 - Метод бисекции")
+print("2 - Метод хорд")
+method = input("Ваш выбор: ")
+
+if method == "1":
+    root = bisection(a, b, eps, function)
+    print(f"\nМетод бисекции. Корень: x ≈ {root:.6f}")
+elif method == "2":
+    root = chord(a, b, eps, function)
+    print(f"\nМетод хорд. Корень: x ≈ {root:.6f}")
+else:
+    print("Неверный выбор")
