@@ -1,0 +1,79 @@
+import re
+with open ("orders", "r", encoding="UTF-8") as file:
+    TEMP = {}
+    TEMP_user = {}
+    user = []
+    for line in file:
+        temp_error = ""
+        temp_error_all = []
+        parts = line.split(";")
+        print(parts)
+
+        #проверка кол-ва пунктов информации о заказе
+        if len(parts) != 5:
+            temp_error = "Неверный формат записи заказа"
+            print(temp_error)
+            temp_error_all.append(temp_error)
+            parts = str(parts)
+            TEMP[parts] = temp_error_all
+            continue
+        #проверка номера заказа
+        try:
+            num = int(parts[0])
+        except ValueError:
+            temp_error = "Неверный формат номера заказа"
+            print(temp_error)
+            temp_error_all.append(temp_error)
+        #проверка формата цены
+        try:
+            amount = int(parts[4])
+            if amount < 0:
+                raise ValueError
+        except ValueError:
+            temp_error = "Неверная цена"
+            print(temp_error)
+            temp_error_all.append(temp_error)
+        #проверка формата количества товара
+        try:
+            count = int(parts[3])
+            if count < 0:
+                raise ValueError
+        except ValueError:
+            temp_error = "Неверное количество"
+            print(temp_error)
+            temp_error_all.append(temp_error)
+        if len(temp_error_all) != 0 :
+            parts = str(parts)
+            TEMP[parts] = temp_error_all
+        else:
+            user.append(parts)
+with open("error", "w", encoding="UTF-8") as file:
+    for key,value in TEMP.items():
+        file.write(f"Строка! {key} \n --Ошибка: {value}\n")
+for line in user:
+    name_user = line[1]
+
+
+print(user)
+
+
+        #     if len(parts) != 5:
+        #         raise ValueError
+        #     else:
+        #         try:
+        #             num = int(parts[3])
+        #             if num < 0:
+        #                 raise TypeError
+        #             if re.search(r"\d+\.\d+", line):
+        #                 raise TypeError
+        #             if int(parts[4]) < 0:
+        #                 raise ValueError("Неверная цена")
+        #         except ValueError:
+        #             print("Неверное количество")
+        #         except TypeError:
+        #             print("Количество не может быть отрицательным или десятичным")
+        # except ValueError:
+        #     print("Неправильные разделители или количество элементов больше положенного")
+
+    # неверный формат строки, неверная цена, некорректное значение, неправильный номер заказа
+#  TEMP_user[parts[1]] = {parts[2]:parts[4]}
